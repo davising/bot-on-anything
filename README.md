@@ -4,20 +4,21 @@
 
 **模型：**
 
- - [x] ChatGPT
+ - [x] [ChatGPT](https://github.com/zhayujie/bot-on-anything#1chatgpt)
  
 **应用：**
 
- - [x] 终端
+ - [x] [终端](https://github.com/zhayujie/bot-on-anything#1%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BB%88%E7%AB%AF)
  - [ ] Web
- - [x] 个人微信
- - [x] 公众号 (个人/企业)
+ - [x] [个人微信](https://github.com/zhayujie/bot-on-anything#2%E4%B8%AA%E4%BA%BA%E5%BE%AE%E4%BF%A1)
+ - [x] [订阅号](https://github.com/zhayujie/bot-on-anything#3%E4%B8%AA%E4%BA%BA%E8%AE%A2%E9%98%85%E5%8F%B7)
+ - [x] [服务号](https://github.com/zhayujie/bot-on-anything#4%E4%BC%81%E4%B8%9A%E6%9C%8D%E5%8A%A1%E5%8F%B7)
  - [ ] 企业微信
- - [ ] Telegram
- - [ ] QQ
+ - [x] [Telegram](https://github.com/zhayujie/bot-on-anything#6telegram)
+ - [x] [QQ](https://github.com/zhayujie/bot-on-anything#5qq)
  - [ ] 钉钉 
  - [ ] 飞书
- - [x] Gmail
+ - [x] [Gmail](https://github.com/zhayujie/bot-on-anything#7gmail)
 
 # 快速开始
 
@@ -140,11 +141,12 @@ pip3 install --upgrade openai
 
 在项目根目录下执行 `python3 app.py` 即可启动程序，用手机扫码后完成登录，使用详情参考 [chatgpt-on-wechat](https://github.com/zhayujie/chatgpt-on-wechat)。
 
+
 ### 3.个人订阅号
 
 **需要：** 一台服务器，一个订阅号
 
-#### 2.1 依赖安装
+#### 3.1 依赖安装
 
 安装 [werobot](https://github.com/offu/WeRoBot) 依赖：
 
@@ -152,7 +154,7 @@ pip3 install --upgrade openai
 pip3 install werobot
 ```
 
-#### 2.2 配置
+#### 3.2 配置
 
 ```bash
 "channel": {
@@ -165,7 +167,7 @@ pip3 install werobot
 }
 ```
 
-#### 2.1 运行程序
+#### 3.3 运行程序
 
 在项目目录下运行 `python3 app.py`，终端显示如下则表示已成功运行：
 
@@ -221,14 +223,85 @@ Hit Ctrl-C to quit.
 
 注意：需将服务器ip地址配置在 "IP白名单" 内，否则用户将收不到主动推送的消息。
 
-### 5. Gmail
+### 5.QQ
 
-**需要：** 一个服务器、一个Gmail account
+需要：一台PC或服务器 (国内网络)、一个QQ号
 
-Follow [官方文档](https://support.google.com/mail/answer/185833?hl=en) to create APP password for google account, config as below, then cheers!!!   (contributed by [Simon](https://github.com/413675377)
-)
+运行qq机器人 需要额外运行一个`go-cqhttp` 程序，cqhttp程序负责接收和发送qq消息， 我们的`bot-on-anything`程序负责访问`openai`生成对话内容。
 
-```json
+#### 5.1 下载 go-cqhttp
+
+在 [go-cqhttp的Release](https://github.com/Mrs4s/go-cqhttp/releases) 中下载对应机器的程序，解压后将 `go-cqhttp` 二进制文件放置在我们的 `bot-on-anything/channel/qq` 目录下。 同时这里已经准备好了一个 `config.yml` 配置文件，仅需要填写其中的 QQ 账号配置 (account-uin)。
+
+#### 5.2 安装 aiocqhttp
+
+使用 [aiocqhttp](https://github.com/nonebot/aiocqhttp) 来与 go-cqhttp 交互， 执行以下语句安装依赖：
+
+```bash
+pip3 install aiocqhttp
+```
+
+#### 5.3 配置
+
+只需修改 `config.json` 配置文件 channel 块中的 type 为 `qq`：
+
+```bash
+"channel": {
+    "type": "qq"
+}
+```
+
+#### 5.4 运行
+
+首先进入 `bot-on-anything` 项目根目录，在 终端1 运行：
+
+```bash
+python3 app.py    # 此时会监听8080端口
+```
+
+第二步打开 终端2，进入到放置 `cqhttp` 的目录并运行：
+
+```bash
+cd channel/qq
+./go-cqhttp
+```
+注意：目前未设置任何 关键词匹配 及 群聊白名单，对所有私聊均会自动回复，在群聊中只要被@也会自动回复。
+
+
+### 6.Telegram
+
+Contributor: [brucelt1993](https://github.com/brucelt1993)
+
+**6.1 获取token**
+
+telegram 机器人申请可以自行谷歌下，很简单，重要的是获取机器人的token id。
+
+
+
+**6.2 依赖安装**
+
+pip install pyTelegramBotAPI
+
+**6.3 配置**
+
+```bash
+"channel": {
+    "type": "telegram",
+    "telegram":{
+      "bot_token": "YOUR BOT TOKEN ID"
+    }
+}
+```
+
+### 7.Gmail
+
+需要: 一个服务器、一个Gmail account
+
+**Contributor:** [Simon](https://github.com/413675377)
+
+Follow [官方文档](https://support.google.com/mail/answer/185833?hl=en) to create APP password for google account, config as below, then cheers!!!
+
+```bash
 "channel": {
     "type": "gmail",
     "gmail": {
