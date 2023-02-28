@@ -29,5 +29,9 @@ def create_channel(channel_type):
         from channel.gmail.gmail_channel import GmailChannel
         return GmailChannel()
 
+    elif channel_type == const.HTTPSERVER:
+        from channel.httpserver.httpserver_channel import HttpServerChannel
+        return HttpServerChannel()
+
     else:
         raise RuntimeError

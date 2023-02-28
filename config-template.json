@@ -18,6 +18,11 @@
     "terminal": {
     },
 
+    "httpserver": {
+      "host": "localhost",
+      "port": 8080
+    },
+
     "wechat": {
     },
 
