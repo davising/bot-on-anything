@@ -30,14 +30,12 @@ def process_submit():
     if query == "" or query.isspace() or from_user_id == "" or from_user_id.isspace():
         return jsonify({"data":""})
 
-    result = ""
-    context = {"from_user_id": from_user_id}
-    for res in Channel().build_reply_content(query, context):
-        result = result + "" + res
 
-    response = {
-        "data": result
-    }
+    context = {"from_user_id": from_user_id}
+    # result = ""
+    # for res in Channel().build_reply_content(query, context):
+    #     result = result + "" + res
+    response = Channel().build_reply_content(query, context)
 
     # Encode the response data as a JSON string
     return jsonify(response)

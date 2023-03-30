@@ -21,7 +21,7 @@ class ChatGPTModel(Model):
             from_user_id = context['from_user_id']
             if query == '#清除记忆':
                 Session.clear_session(from_user_id)
-                return '记忆已清除'
+                return '{"content":"记忆已被清除！","tokens":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}'
 
             new_query = Session.build_session_query(query, from_user_id)
             log.debug("[OPEN_AI] session query={}".format(new_query))
@@ -30,11 +30,11 @@ class ChatGPTModel(Model):
             #     # reply in stream
             #     return self.reply_text_stream(query, new_query, from_user_id)
 
-            reply_content = self.reply_text(new_query, from_user_id, 0)
-            log.debug("[OPEN_AI] new_query={}, user={}, reply_cont={}".format(new_query, from_user_id, reply_content))
-            if reply_content:
-                Session.save_session(query, reply_content, from_user_id)
-            return reply_content
+            reply_dict = self.reply_text(new_query, from_user_id, 0)
+            log.debug("[OPEN_AI] new_query={}, user={}, reply_cont={}".format(new_query, from_user_id, reply_dict["content"]))
+            if reply_dict["content"]:
+                Session.save_session(query, reply_dict["content"], from_user_id)
+            return reply_dict
 
         elif context.get('type', None) == 'IMAGE_CREATE':
             return self.create_img(query, 0)
@@ -52,8 +52,12 @@ class ChatGPTModel(Model):
             )
             # res_content = response.choices[0]['text'].strip().replace('<|endoftext|>', '')
             log.info(response.choices[0]['message']['content'])
+            # show tokens log.info(response.usage) {'prompt_tokens': 56, 'completion_tokens': 31, 'total_tokens': 87} #todo 打印出使用的tokens
             # log.info("[OPEN_AI] reply={}".format(res_content))
-            return response.choices[0]['message']['content']
+            reply_dict = {}
+            reply_dict['content'] = response.choices[0]['message']['content']
+            reply_dict['tokens'] = response.usage
+            return reply_dict
         except openai.error.RateLimitError as e:
             # rate limit exception
             log.warn(e)
