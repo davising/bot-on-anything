@@ -21,7 +21,7 @@ class ChatGPTModel(Model):
             from_user_id = context['from_user_id']
             if query == '#清除记忆':
                 Session.clear_session(from_user_id)
-                return '{"content":"记忆已被清除！","tokens":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}'
+                return {"content":"记忆已被清除！","tokens":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}
 
             new_query = Session.build_session_query(query, from_user_id)
             log.debug("[OPEN_AI] session query={}".format(new_query))
@@ -44,9 +44,9 @@ class ChatGPTModel(Model):
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",  # 对话模型的名称
                 messages=query,
-                temperature=0.9,  # 值在[0,1]之间，越大表示回复越具有不确定性
-                max_tokens=1200,  # 回复最大的字符数
-                top_p=1,
+                temperature=0.5,  # 值在[0,1]之间，越大表示回复越具有不确定性
+                max_tokens=600,  # 回复最大的字符数
+                # top_p=1,
                 frequency_penalty=0.0,  # [-2,2]之间，该值越大则更倾向于产生不同的内容
                 presence_penalty=0.0,  # [-2,2]之间，该值越大则更倾向于产生不同的内容
             )
